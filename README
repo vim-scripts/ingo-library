@@ -1,0 +1,22 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=4433
+
+DESCRIPTION
+This library contains common autoload functions that are used by almost all of
+my plugins (http://www.vim.org/account/profile.php?user_id=9713). Instead of
+duplicating the functionality, or installing potentially conflicting versions
+with each plugin, this one core dependency fosters a lean Vim runtime and
+easier plugin updates.
+
+RELATED WORKS
+Other authors have published separate support libraries, too:
+
+- genutils (vimscript #197) by Hari Krishna Dara
+- lh-vim-lib (vimscript #214) by Luc Hermitte
+- cecutil (vimscript #1066) by DrChip
+- tlib (vimscript #1863) by Thomas Link
+- TOVL (vimscript #1963) by Marc Weber
+- l9 (vimscript #3252) by Takeshi Nishida
+- anwolib (vimscript #3800) by Andy Wokula
+
+There have been initiatives to gather and consolidate useful functions into a
+"standard Vim library", but these efforts have mostly fizzled out.
