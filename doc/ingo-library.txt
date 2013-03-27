@@ -60,6 +60,12 @@ IDEAS							  *ingo-library-ideas*
 ==============================================================================
 HISTORY							*ingo-library-history*
 
+1.003	27-Mar-2013
+- Add ingo#msg#ShellError().
+- Add ingo#system#Chomped().
+- Add ingo/fs/traversal.vim module.
+- Add search/timelimited.vim module.
+
 1.002	08-Mar-2013
 - Minor: Allow to specify filespec of GVIM executable in
   ingo#external#LaunchGvim().
@@ -76,7 +82,7 @@ Started development of shared autoload functionality.
 
 ==============================================================================
 Copyright: (C) 2009-2013 Ingo Karkat
-The VIM LICENSE applies to this script; see |copyright|.
+The VIM LICENSE applies to this plugin; see |copyright|.
 
 Maintainer:	Ingo Karkat <ingo@karkat.de>
 ==============================================================================
