@@ -29,7 +29,7 @@ Other authors have published separate support libraries, too:
 - TOVL (vimscript #1963) by Marc Weber
 - l9 (vimscript #3252) by Takeshi Nishida
 - anwolib (vimscript #3800) by Andy Wokula
-- vim-misc (https://github.com/xolox/vim-misc) by Peter Odding
+- vim-misc (vimscript #4597) by Peter Odding
 
 There have been initiatives to gather and consolidate useful functions into a
 "standard Vim library", but these efforts have mostly fizzled out.
@@ -61,20 +61,34 @@ IDEAS							  *ingo-library-ideas*
 ==============================================================================
 HISTORY							*ingo-library-history*
 
+1.006	29-May-2013
+- Add ingo/cmdrangeconverter.vim module.
+- Add ingo#mapmaker.vim module.
+- Add optional isReturnError flag on
+  ingo#window#switches#GotoPreviousWindow().
+- Add ingo#msg#StatusMsg().
+- Add ingo/selection/patternmatch.vim module.
+- Add ingo/selection.vim module.
+- Add ingo/search/pattern.vim module.
+- Add ingo/regexp.vim module.
+- Add ingo/regexp/magic.vim module.
+- Add ingo/collections/rotate.vim module.
+- Redesign ingo#cmdargs#ParseSubstituteArgument() to the existing use cases.
+- Add ingo/buffer.vim module.
+
 1.005	02-May-2013
 - Add ingo/plugin/setting.vim module.
 - Add ingo/plugin/cmdcomplete.vim module.
 - Add ingo/search/buffer.vim module.
 - Add ingo/number.vim module.
-- Add ingo/cmdrangeconverter.vim module.
 - Add ingo#err#IsSet() for those cases when wrapping the command in :if does
   not work (e.g. :call'ing a range function).
-- Add ingo#mapmaker.vim module.
 - Add ingo#syntaxitem.vim module.
 - Add ingo#comments.vim module.
 
 1.004	10-Apr-2013
 - Add ingo/compat.vim module.
+- Add ingo/folds.vim module.
 - Add ingo/lines module.
 - Add ingo/matches module.
 - Add ingo/mbyte/virtcol module.
