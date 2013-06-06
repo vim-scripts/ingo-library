@@ -21,9 +21,10 @@
 "   purposes).
 "   This set of functions solves the problem that the error is often raised in a
 "   function, but the :echoerr has to be done directly from the :command (to
-"   avoid the printing of the multi-line error source). One could return the
-"   error string from the function and then perform the :echoerr on non-empty
-"   result, but that requires a temporary (global) variable and is cumbersome.
+"   avoid the printing of the multi-line error source). Unfortunately, an error
+"   is still raised when an empty expression is used. One could return the error
+"   string from the function and then perform the :echoerr on non-empty result,
+"   but that requires a temporary (global) variable and is cumbersome.
 "* USAGE:
 "   Inside your function, invoke one of the ingo#err#Set...() functions.
 "   Indicate to the invoking :command via a boolean flag whether the command
@@ -35,7 +36,12 @@
 "	    call ingo#err#Clear()
 "	    ...
 "	endfunction
-"	nnoremap <Leader>f :call Foo#Bar()<<Bar>if ingo#err#IsSet()<Bar>echoerr ingo#err#Get()<Bar>endif<CR>
+"	nnoremap <Leader>f :call Foo#Bar()<Bar>if ingo#err#IsSet()<Bar>echoerr ingo#err#Get()<Bar>endif<CR>
+"   Don't invoke anything after the :echoerr ... | endif | XXX! Though this is
+"   normally executed, when run inside try...catch, it isn't! Better place the
+"   command(s) between your function and the :echoerr, and also query
+"   ingo#err#IsSet() to avoid having to use a temporary variable to get the
+"   returned error flag across the command(s).
 "******************************************************************************
 let s:errmsg = ''
 function! ingo#err#Get()
