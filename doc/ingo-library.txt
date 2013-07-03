@@ -61,6 +61,27 @@ IDEAS							  *ingo-library-ideas*
 ==============================================================================
 HISTORY							*ingo-library-history*
 
+1.009	03-Jul-2013
+- Minor: Make substitute() robust against 'ignorecase' in various functions.
+- Add ingo/subst.vim module.
+- Add ingo/escape.vim module.
+- Add ingo/regexp/comments.vim module.
+- Add ingo/cmdline/showmode.vim module.
+- Add ingo/str.vim module.
+- Add ingo/strdisplaywidth/pad.vim module.
+- Add ingo/dict.vim module.
+- Add ingo#msg#HighlightMsg(), and allow to pass an optional highlight group
+  to ingo#msg#StatusMsg().
+- Add ingo#collections#Flatten() and ingo#collections#Flatten1().
+- Move ingo#collections#MakeUnique() to ingo/collections/unique.vim.
+- Add ingo#collections#unique#ExtendWithNew().
+- Add ingo#fs#path#Equals().
+- Add ingo#tabstops#RenderMultiLine(), as ingo#tabstops#Render() does not
+  properly render multi-line text.
+- Add ingo/str/split.vim module.
+- FIX: Avoid E108: No such variable: "b:browsefilter" in
+  ingo#query#file#Browse().
+
 1.008	13-Jun-2013
 - Fix missing argument error for ingo#query#file#BrowseDirForOpenFile() and
   ingo#query#file#BrowseDirForAction().

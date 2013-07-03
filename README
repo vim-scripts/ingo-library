@@ -21,3 +21,17 @@ Other authors have published separate support libraries, too:
 
 There have been initiatives to gather and consolidate useful functions into a
 "standard Vim library", but these efforts have mostly fizzled out.
+
+USAGE
+This library is mainly intended to be used by my own plugins. However, I try
+to maintain backwards compatibility as much as possible. Feel free to use the
+library for your own plugins and customizations, too. I'd also like to hear
+from you if you have additions or comments.
+
+EXCEPTION HANDLING
+For exceptional conditions (e.g. cannot locate window that should be there)
+and programming errors (e.g. passing a wrong variable type to a library
+function), error strings are |:throw|n. These are prefixed with (something
+resembling) the short function name, so that it's possible to :catch these
+and e.g. convert them into a proper error (e.g. via
+ingo#err#SetCustomException()).
