@@ -8,6 +8,8 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.010.002	03-Jul-2013	Add ingo#collections#unique#AddNew() and
+"				ingo#collections#unique#InsertNew().
 "   1.009.001	25-Jun-2013	file creation
 
 function! ingo#collections#unique#MakeUnique( memory, expr )
@@ -36,6 +38,45 @@ function! ingo#collections#unique#MakeUnique( memory, expr )
 
     let a:memory[l:result] = 1
     return l:result
+endfunction
+
+function! ingo#collections#unique#AddNew( list, expr )
+"******************************************************************************
+"* PURPOSE:
+"   Append a:expr to a:list when it's not already contained.
+"* ASSUMPTIONS / PRECONDITIONS:
+"   None.
+"* EFFECTS / POSTCONDITIONS:
+"   None.
+"* INPUTS:
+"   a:list  List to be modified.
+"   a:expr  Item to be added.
+"* RETURN VALUES:
+"   a:list
+"******************************************************************************
+    return ingo#collections#unique#InsertNew(a:list, a:expr, len(a:list))
+endfunction
+function! ingo#collections#unique#InsertNew( list, expr, ... )
+"******************************************************************************
+"* PURPOSE:
+"   Insert a:expr at the start of a:list when it's not already contained.
+"   If a:idx is specified insert a:expr before the item with index a:idx.
+"* ASSUMPTIONS / PRECONDITIONS:
+"   None.
+"* EFFECTS / POSTCONDITIONS:
+"   None.
+"* INPUTS:
+"   a:list  List to be modified.
+"   a:expr  Item to be added.
+"   a:idx   Optional index before which a:expr is inserted.
+"* RETURN VALUES:
+"   a:list
+"******************************************************************************
+    if index(a:list, a:expr) == -1
+	return call('insert', [a:list, a:expr] + a:000)
+    else
+	return a:list
+    endif
 endfunction
 
 function! ingo#collections#unique#ExtendWithNew( expr1, expr2, ... )
