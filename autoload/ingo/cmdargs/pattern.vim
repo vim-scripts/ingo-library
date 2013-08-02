@@ -8,10 +8,12 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.011.002	24-Jul-2013	FIX: Use the rules for the /pattern/ separator
+"				as stated in :help E146.
 "   1.007.001	01-Jun-2013	file creation
 
 function! ingo#cmdargs#pattern#Parse( arguments, ... )
-    let l:match = matchlist(a:arguments, '^\(\i\@!\S\)\(.\{-}\)\%(\%(^\|[^\\]\)\%(\\\\\)*\\\)\@<!\1' . (a:0 ? a:1 : '') . '$')
+    let l:match = matchlist(a:arguments, '^\([[:alnum:]\\"|]\@![\x00-\xFF]\)\(.\{-}\)\%(\%(^\|[^\\]\)\%(\\\\\)*\\\)\@<!\1' . (a:0 ? a:1 : '') . '$')
     if empty(l:match)
 	return ['/', escape(a:arguments, '/')] + (a:0 ? [''] : [])
     else

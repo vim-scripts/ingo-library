@@ -79,6 +79,31 @@ IDEAS							  *ingo-library-ideas*
 ==============================================================================
 HISTORY							*ingo-library-history*
 
+1.011	02-Aug-2013
+- Add ingo/range.vim module.
+- Add ingo/register.vim module.
+- Make ingo#collections#ToDict() handle empty list items via an optional
+  a:emptyValue argument. This also distinguishes it from ingo#dict#FromKeys().
+- ENH: Handle empty list items in ingo#collections#Unique() and
+  ingo#collections#UniqueStable().
+- Add ingo/gui/position.vim module.
+- Add ingo/filetype.vim module.
+- Add ingo/ftplugin/onbufwinenter.vim module.
+- Add ingo/selection/frompattern.vim module.
+- Add ingo/text.vim module.
+- Add ingo/ftplugin/windowsettings.vim module.
+- Add ingo/text/replace.vim module.
+- FIX: Use the rules for the /pattern/ separator as stated in :help E146 for
+  ingo#cmdargs#pattern#Parse() and ingo#cmdargs#substitute#Parse().
+- FIX: Off-by-one in ingo#strdisplaywidth#HasMoreThan() and
+  ingo#strdisplaywidth#strleft().
+- Add ingo#str#Reverse().
+- ingo#fs#traversal#FindLastContainedInUpDir now defaults to the current
+  buffer's directory; omit the argument.
+- Add ingo#actions#EvaluateWithValOrFunc().
+- Extract ingo#fs#path#IsUncPathRoot().
+- Add ingo#fs#traversal#FindDirUpwards().
+
 1.010	09-Jul-2013
 - Add ingo/actions.vim module.
 - Add ingo/cursor/move.vim module.
