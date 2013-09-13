@@ -79,6 +79,29 @@ IDEAS							  *ingo-library-ideas*
 ==============================================================================
 HISTORY							*ingo-library-history*
 
+1.013	13-Sep-2013
+- Also avoid clobbering the last change ('.') in ingo#selection#Get() when
+  'cpo' contains "y".
+- Name the temp buffer for ingo#buffer#temp#Execute() and re-use previous
+  instances to avoid increasing the buffer numbers and output of :ls!.
+- CHG: Make a:isIgnoreIndent flag to ingo#comments#CheckComment() optional and
+  add a:isStripNonEssentialWhiteSpaceFromCommentString, which is also on by
+  default for DWIM.
+- CHG: Don't strip whitespace in ingo#comments#RemoveCommentPrefix(); with the
+  changed ingo#comments#CheckComment() default behavior, this isn't necessary,
+  and is unexpected.
+- ingo#comments#RenderComment: When the text starts with indent identical to
+  what 'commentstring' would render, avoid having duplicate indent.
+- Minor: Return last search pattern instead of empty string on
+  ingo#search#pattern#GetLastForwardSearch(0).
+- Avoid using \ze in ingo#regexp#comments#CommentToExpression(). It may be
+  used in a larger expression that still wants to match after the prefix.
+- FIX: Correct case of ingo#os#IsWin*() function names.
+- ingo#regexp#FromWildcard(): Limit * glob matching to individual path
+  components and add ** for cross-directory matching.
+- Consistently use operating system detection functions from ingo/os.vim
+  within the ingo-library.
+
 1.012	05-Sep-2013
 - CHG: Change return value format of ingo#selection#frompattern#GetPositions()
   to better match the arguments of functions like ingo#text#Get().

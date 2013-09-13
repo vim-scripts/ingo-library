@@ -8,6 +8,19 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.013.005	06-Sep-2013	CHG: Make a:isIgnoreIndent flag to
+"				ingo#comments#CheckComment() optional and add
+"				a:isStripNonEssentialWhiteSpaceFromCommentString,
+"				which is also on by default for DWIM.
+"				CHG: Don't strip whitespace in
+"				ingo#comments#RemoveCommentPrefix(); with the
+"				changed ingo#comments#CheckComment() default
+"				behavior, this isn't necessary, and is
+"				unexpected.
+"				ingo#comments#RenderComment: When the text
+"				starts with indent identical to what
+"				'commentstring' would render, avoid having
+"				duplicate indent.
 "   1.005.004	02-May-2013	Move to ingo-library.
 "	003	24-May-2012	Add ingocomments#RemoveCommentPrefix().
 "	002	09-Nov-2011	Add ingocomments#CheckComment() and
@@ -24,7 +37,7 @@ function! s:IsPrefixMatch( string, prefix )
     return strpart(a:string, 0, len(a:prefix)) ==# a:prefix
 endfunction
 
-function! ingo#comments#CheckComment( text, isIgnoreIndent )
+function! ingo#comments#CheckComment( text, ... )
 "******************************************************************************
 "* PURPOSE:
 "   Check whether a:text is a comment according to 'comments' definitions.
@@ -35,9 +48,14 @@ function! ingo#comments#CheckComment( text, isIgnoreIndent )
 "* INPUTS:
 "   a:text	The text to be checked. If the "b" flag is contained in
 "		'comments', the proper whitespace must exist.
-"   a:isIgnoreIndent	Flag; if set, there must either be no leading whitespace
-"			or exactly the amount mandated by the indent of a
-"			three-piece comment.
+"   a:options.isIgnoreIndent	Flag; if set (the default), there must either be
+"				no leading whitespace or exactly the amount
+"				mandated by the indent of a three-piece comment.
+"   a:options.isStripNonEssentialWhiteSpaceFromCommentString
+"				Flag; if set (the default), any trailing
+"				whitespace in the returned commentstring (e.g.
+"				often indent in the middle part of a
+"				three-piece) is stripped.
 "* RETURN VALUES:
 "   [] if a:text is not a comment.
 "   [commentstring, type, nestingLevel, isBlankRequired] if a:text is a comment.
@@ -50,12 +68,16 @@ function! ingo#comments#CheckComment( text, isIgnoreIndent )
 "	are counted for nesting.
 "	isBlankRequired is a boolean flag
 "******************************************************************************
-    let l:text = (a:isIgnoreIndent ? substitute(a:text, '^\s*', '', '') : a:text)
+    let l:options = (a:0 ? a:1 : {})
+    let l:isIgnoreIndent = get(l:options, 'isIgnoreIndent', 1)
+    let l:isStripNonEssentialWhiteSpaceFromCommentString = get(l:options, 'isStripNonEssentialWhiteSpaceFromCommentString', 1)
+
+    let l:text = (l:isIgnoreIndent ? substitute(a:text, '^\s*', '', '') : a:text)
 
     for [l:flags, l:string] in s:CommentDefinitions()
 	if l:flags =~# '[se]'
 	    if l:flags =~# '[se].*\d' && l:flags !~# '-\d'
-		if a:isIgnoreIndent
+		if l:isIgnoreIndent
 		    let l:threePieceOffset = ''
 		else
 		    " Consider positive offset for the middle of a three-piece
@@ -88,6 +110,9 @@ function! ingo#comments#CheckComment( text, isIgnoreIndent )
 		let l:nestingLevel = strlen(substitute(l:comments, '\V\C' . escape(l:string, '\') . '\s\*', 'x', 'g'))
 	    endif
 
+	    if l:isStripNonEssentialWhiteSpaceFromCommentString
+		let l:commentstring = substitute(l:commentstring, '\s*$', '', '')
+	    endif
 	    return [l:commentstring, matchstr(l:flags, '\C[sme]'), l:nestingLevel, l:isBlankRequired]
 	endif
     endfor
@@ -95,6 +120,12 @@ function! ingo#comments#CheckComment( text, isIgnoreIndent )
     return []
 endfunction
 
+function! s:AvoidDuplicateIndent( commentstring, text )
+    " When the text starts with indent identical to what 'commentstring' would
+    " render, avoid having duplicate indent.
+    let l:renderedIndent = matchstr(a:commentstring, '\s\+\ze%s')
+    return (a:text =~# '^\V' . l:renderedIndent ? strpart(a:text, len(l:renderedIndent)) : a:text)
+endfunction
 function! ingo#comments#RenderComment( text, checkComment )
 "******************************************************************************
 "* PURPOSE:
@@ -119,24 +150,26 @@ function! ingo#comments#RenderComment( text, checkComment )
     if &commentstring =~# '\V\C' . escape(l:commentprefix, '\') . (l:isBlankRequired ? '\s' : '')
 	" The found comment is the same as 'commentstring' will generate.
 	" Generate with the proper nesting.
-	let l:render = a:text
+	let l:render = s:AvoidDuplicateIndent(&commentstring, a:text)
 	for l:ii in range(max([1, l:nestingLevel]))
 	    let l:render = printf(&commentstring, l:render)
 	endfor
 	return l:render
     elseif ! empty(&commentstring)
 	" No match, just use 'commentstring'.
-	return printf(&commentstring, a:text)
+	return printf(&commentstring, s:AvoidDuplicateIndent(&commentstring, a:text))
     else
 	" No 'commentstring' defined, use same comment prefix.
-	return repeat(l:commentprefix . (l:isBlankRequired ? ' ' : ''), max([1, l:nestingLevel])) . (l:isBlankRequired ? '' : ' ') . a:text
+	return repeat(l:commentprefix . (l:isBlankRequired ? ' ' : ''), max([1, l:nestingLevel])) . (l:isBlankRequired ? '' : ' ') . s:AvoidDuplicateIndent(' %s', a:text)
     endif
 endfunction
 
 function! ingo#comments#RemoveCommentPrefix( text, checkComment )
 "******************************************************************************
 "* PURPOSE:
-"   Remove the detected a:checkComment from a:text.
+"   Remove the detected a:checkComment from a:text. Whitespace between the
+"   comment prefix and actual comment (that does not belong to the commentstring
+"   itself) is kept.
 "* ASSUMPTIONS / PRECONDITIONS:
 "   None.
 "* EFFECTS / POSTCONDITIONS:
@@ -154,7 +187,7 @@ function! ingo#comments#RemoveCommentPrefix( text, checkComment )
 
     let [l:commentprefix, l:type, l:nestingLevel, l:isBlankRequired] = a:checkComment
 
-    return substitute(a:text, '\s*\V\C' . escape(l:commentprefix, '\') . (l:isBlankRequired ? '\s\+' : '\s\*'), '', 'g')
+    return substitute(a:text, '\s*\V\C' . escape(l:commentprefix, '\') . (l:isBlankRequired ? '\s\@=' : ''), '', 'g')
 endfunction
 
 function! ingo#comments#GetCommentPrefixType( prefix )
