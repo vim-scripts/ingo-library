@@ -8,6 +8,8 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.014.003	10-Nov-2013	Add month and year granularity to
+"				ingo#date#HumanReltime().
 "   1.010.002	08-Jul-2013	Move into ingo-library.
 "	001	07-Oct-2011	file creation
 
@@ -49,7 +51,11 @@ function! ingo#date#HumanReltime( timeElapsed, ... )
     let l:options = (a:0 ? a:1 : {})
     let l:isShortFormat = get(l:options, 'shortformat', 0)
     let l:isRightAligned = get(l:options, 'rightaligned', 0)
-    let [l:now, l:seconds, l:minutes, l:hours, l:days] = (l:isShortFormat ? ['now', 's', 'm', 'h', 'd'] : ['just now', 'second', 'minute', 'hour', 'day'])
+    let [l:now, l:seconds, l:minutes, l:hours, l:days, l:months, l:years] = (
+    \   l:isShortFormat ?
+    \       ['now', 's', 'm', 'h', 'd', 'mo.', 'y'] :
+    \       ['just now', 'second', 'minute', 'hour', 'day', 'month', 'year']
+    \)
 
     let l:isInFuture = 0
     let l:timeElapsed = a:timeElapsed
@@ -62,6 +68,8 @@ function! ingo#date#HumanReltime( timeElapsed, ... )
     let l:minutesElapsed = (l:timeElapsed / 60) % 60
     let l:hoursElapsed = (l:timeElapsed / 3600) % 24
     let l:daysElapsed = (l:timeElapsed / (3600 * 24))
+    let l:monthsElapsed = (l:timeElapsed / (3600 * 24 * 30))
+    let l:yearsElapsed = (l:timeElapsed / (3600 * 24 * 365))
 
     if l:timeElapsed < 5
 	return s:Align(l:isShortFormat, l:isRightAligned, l:now)
@@ -73,8 +81,12 @@ function! ingo#date#HumanReltime( timeElapsed, ... )
 	return s:Relative(l:isShortFormat, l:isRightAligned, l:isInFuture, (l:timeElapsed / 60), l:minutes)
     elseif l:timeElapsed < 86400
 	return s:Relative(l:isShortFormat, l:isRightAligned, l:isInFuture, (l:timeElapsed / 3600), l:hours)
-    else
+    elseif l:timeElapsed < 86400 * (30 + 31)
 	return s:Relative(l:isShortFormat, l:isRightAligned, l:isInFuture, (l:timeElapsed / 86400), l:days)
+    elseif l:timeElapsed < 86400 * (365 + 31)
+	return s:Relative(l:isShortFormat, l:isRightAligned, l:isInFuture, (l:timeElapsed / 86400 / 30), l:months)
+    else
+	return s:Relative(l:isShortFormat, l:isRightAligned, l:isInFuture, (l:timeElapsed / 86400 / 365), l:years)
     endif
 endfunction
 

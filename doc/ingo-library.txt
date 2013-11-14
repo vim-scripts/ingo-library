@@ -79,6 +79,29 @@ IDEAS							  *ingo-library-ideas*
 ==============================================================================
 HISTORY							*ingo-library-history*
 
+1.014	14-Nov-2013
+- Add ingo/date/format.vim module.
+- Add ingo#os#PathSeparator().
+- Add ingo/foldtext.vim module.
+- Add ingo#os#IsCygwin().
+- ingo#fs#path#Normalize(): Also convert between the different D:\ and
+  /cygdrive/d/ notations on Windows and Cygwin.
+- Add ingo#text#frompattern#GetHere().
+- Add ingo/date/epoch.vim module.
+- Add ingo#buffer#IsPersisted().
+- Add ingo/list.vim module.
+- Add ingo/query/confirm.vim module.
+- Add ingo#text#GetChar().
+- Add ingo/regexp/fromwildcard.vim module (contributed by the EditSimilar.vim
+  plugin). In constrast to the simpler ingo#regexp#FromWildcard(), this
+  handles the full range of wildcards and considers the path separators on
+  different platforms.
+- Add ingo#register#KeepRegisterExecuteOrFunc().
+- Add ingo#actions#ValueOrFunc().
+- Add ingo/funcref.vim module.
+- Add month and year granularity to ingo#date#HumanReltime().
+- Add ingo/units.vim module.
+
 1.013	13-Sep-2013
 - Also avoid clobbering the last change ('.') in ingo#selection#Get() when
   'cpo' contains "y".
