@@ -79,6 +79,20 @@ IDEAS							  *ingo-library-ideas*
 ==============================================================================
 HISTORY							*ingo-library-history*
 
+1.015	28-Nov-2013
+- Add ingo/format.vim module.
+- FIX: Actually return the result of a Funcref passed to
+  ingo#register#KeepRegisterExecuteOrFunc().
+- Make buffer argument of ingo#buffer#IsBlank() optional, defaulting to the
+  current buffer.
+- Allow use of ingo#buffer#IsEmpty() with other buffers.
+- CHG: Pass _all_ additional arguments of ingo#actions#ValueOrFunc(),
+  ingo#actions#NormalOrFunc(), ingo#actions#ExecuteOrFunc(),
+  ingo#actions#EvaluateOrFunc() instead of only the first (interpreted as a
+  List of arguments) when passed a Funcref as a:Action.
+- Add ingo#compat#setpos().
+- Add ingo/print.vim module.
+
 1.014	14-Nov-2013
 - Add ingo/date/format.vim module.
 - Add ingo#os#PathSeparator().

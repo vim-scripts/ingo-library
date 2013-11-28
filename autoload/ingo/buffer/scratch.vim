@@ -221,6 +221,9 @@ function! ingo#buffer#scratch#Create( scratchDirspec, scratchFilename, scratchIs
 "   2	Jumped to open scratch buffer window.
 "   3	Loaded existing scratch buffer in new window.
 "   4	Created scratch buffer in new window.
+"   Note: To handle errors caused by a:scratchCommand, you need to put this
+"   method call into a try..catch block and :close the scratch buffer when an
+"   exception is thrown
 "*******************************************************************************
     let l:currentWinNr = winnr()
     let l:status = 0
