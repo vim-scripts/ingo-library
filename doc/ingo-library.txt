@@ -79,6 +79,23 @@ IDEAS							  *ingo-library-ideas*
 ==============================================================================
 HISTORY							*ingo-library-history*
 
+1.016	22-Jan-2014
+- Add ingo#window#quickfix#GetList() and ingo#window#quickfix#SetList().
+- Add ingo/cursor.vim module.
+- Add ingo#text#Insert() and ingo#text#Remove().
+- Add ingo#str#StartsWith() and ingo#str#EndsWith().
+- Add ingo#dict#Mirror() and ingo#dict#AddMirrored().
+- BUG: Wrap :autocmd! undo_ftplugin_N in :execute to that superordinated
+  ftplugins can append additional undo commands without causing "E216: No such
+  group or event: undo_ftplugin_N|setlocal".
+- Add ingo/motion/helper.vim module.
+- Add ingo/motion/omap.vim module.
+- Add ingo/subst/pairs.vim module.
+- Add ingo/plugin/compiler.vim module.
+- Move ingo#escape#shellcommand#shellcmdescape() to
+  ingo#compat#shellcommand#escape(), as it is only required for older Vim
+  versions.
+
 1.015	28-Nov-2013
 - Add ingo/format.vim module.
 - FIX: Actually return the result of a Funcref passed to
@@ -288,7 +305,7 @@ First published version as separate shared library.
 Started development of shared autoload functionality.
 
 ==============================================================================
-Copyright: (C) 2009-2013 Ingo Karkat
+Copyright: (C) 2009-2014 Ingo Karkat
 The VIM LICENSE applies to this plugin; see |copyright|.
 
 Maintainer:	Ingo Karkat <ingo@karkat.de>
