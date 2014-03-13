@@ -31,6 +31,8 @@ Other authors have published separate support libraries, too:
 - l9 (vimscript #3252) by Takeshi Nishida
 - anwolib (vimscript #3800) by Andy Wokula
 - vim-misc (vimscript #4597) by Peter Odding
+- maktaba (https://github.com/google/maktaba) by Google
+- vital (https://github.com/vim-jp/vital.vim) by the Japanese Vim user group
 
 There have been initiatives to gather and consolidate useful functions into a
 "standard Vim library", but these efforts have mostly fizzled out.
@@ -78,6 +80,19 @@ IDEAS							  *ingo-library-ideas*
 
 ==============================================================================
 HISTORY							*ingo-library-history*
+
+1.017	13-Mar-2014
+- CHG: Make ingo#cmdargs#file#FilterFileOptionsAndCommands() return the
+  options and commands in a List, not as a joined String. This allows clients
+  to easily re-escape them and handle multiple ones, e.g. ++ff=dos +setf\ foo.
+- Add workarounds for fnameescape() bugs on Windows for ! and [] characters.
+- Add ingo#escape#UnescapeExpr().
+- Add ingo/str/restricted.vim module.
+- Make ingo#query#get#Char() only abort on <Esc> when that character is not in
+  the validExpr (to allow to explicitly query it).
+- Add ingo/query/substitute.vim module.
+- Add ingo/subst/expr/emulation.vim module.
+- Add ingo/cmdargs/register.vim module.
 
 1.016	22-Jan-2014
 - Add ingo#window#quickfix#GetList() and ingo#window#quickfix#SetList().
