@@ -81,6 +81,21 @@ IDEAS							  *ingo-library-ideas*
 ==============================================================================
 HISTORY							*ingo-library-history*
 
+1.018	14-Apr-2014
+- FIX: Off-by-one: Allow column 1 in ingo#text#Insert(). Add special cases for
+  insertion at front and end of line (in the hope that this is more
+  efficient).
+- Add ingo#escape#file#wildcardescape().
+- I18N: Correctly capture last multi-byte character in ingo#text#Get(); don't
+  just add one to the end column, but instead match at the column itself, too.
+- Add optional a:isExclusive flag to ingo#text#Get(), as clients may end up
+  with that position, and doing a correct I18N-safe decrease before getting
+  the text is a hen-and-egg problem.
+- Add ingo/buffer/temprange.vim module.
+- Add ingo#cursor#IsAtEndOfLine().
+- FIX: Off-by-one in emulated ingo#compat#strdisplaywidth() reported one too
+  few.
+
 1.017	13-Mar-2014
 - CHG: Make ingo#cmdargs#file#FilterFileOptionsAndCommands() return the
   options and commands in a List, not as a joined String. This allows clients
