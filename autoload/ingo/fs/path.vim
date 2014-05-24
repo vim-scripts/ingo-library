@@ -2,13 +2,22 @@
 "
 " DEPENDENCIES:
 "   - ingo/os.vim autoload script
+"   - ingo/escape/file.vim autoload script
 "
-" Copyright: (C) 2012-2013 Ingo Karkat
+" Copyright: (C) 2012-2014 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.019.009	23-May-2014	Add ingo#fs#path#Exists().
+"   1.019.008	21-May-2014	Add ingo#fs#path#IsCaseInsensitive().
+"   1.019.007	07-May-2014	ingo#fs#path#Normalize(): Don't normalize to
+"				Cygwin /cygdrive/x/... when the chosen path
+"				separator is "\". This would result in a mixed
+"				separator style that is not actually handled.
+"				Add special normalization to "C:/" on Cygwin via
+"				":/" path separator argument.
 "   1.014.006	26-Sep-2013	ingo#fs#path#Normalize(): Also convert between
 "				the different D:\ and /cygdrive/d/ notations on
 "				Windows and Cygwin.
@@ -37,18 +46,20 @@ function! ingo#fs#path#Normalize( filespec, ... )
 "* EFFECTS / POSTCONDITIONS:
 "   None.
 "* INPUTS:
-"   a:filespec  Filespec, potentially with mixed / and \ path separators.
-"   a:pathSeparator Optional path separator to be used.
+"   a:filespec      Filespec, potentially with mixed / and \ path separators.
+"   a:pathSeparator Optional path separator to be used. With the special value
+"		    of ":/", normalizes to "/", but keeps a "C:/" drive letter
+"		    prefix instead of translating to "/cygdrive/c/".
 "* RETURN VALUES:
 "   a:filespec with uniform path separators, according to the platform.
 "******************************************************************************
-    let l:pathSeparator = (a:0 ? a:1 : ingo#fs#path#Separator())
+    let l:pathSeparator = (a:0 ? (a:1 ==# ':/' ? '/' : a:1) : ingo#fs#path#Separator())
     let l:badSeparator = (l:pathSeparator ==# '/' ? '\' : '/')
     let l:result = tr(a:filespec, l:badSeparator, l:pathSeparator)
 
     if ingo#os#IsWinOrDos()
 	let l:result = substitute(l:result, '^[/\\]cygdrive[/\\]\(\a\)\ze[/\\]', '\u\1:', '')
-    elseif ingo#os#IsCygwin()
+    elseif ingo#os#IsCygwin() && l:pathSeparator ==# '/' && ! (a:0 && a:1 ==# ':/')
 	let l:result = substitute(l:result, '^\(\a\):', '/cygdrive/\l\1', '')
     endif
 
@@ -122,14 +133,51 @@ function! ingo#fs#path#GetRootDir( filespec )
     return l:dir
 endfunction
 
-if ingo#os#IsWinOrDos()
-    function! ingo#fs#path#Equals( p1, p2 )
+function! ingo#fs#path#IsCaseInsensitive( ... )
+    return ingo#os#IsWinOrDos() " Note: Check based on path not yet implemented.
+endfunction
+
+function! ingo#fs#path#Equals( p1, p2 )
+    if ingo#fs#path#IsCaseInsensitive(a:p1) || ingo#fs#path#IsCaseInsensitive(a:p2)
 	return a:p1 ==? a:p2 || ingo#fs#path#Normalize(fnamemodify(a:p1, ':p')) ==? ingo#fs#path#Normalize(fnamemodify(a:p2, ':p'))
-    endfunction
-else
-    function! ingo#fs#path#Equals( p1, p2 )
+    else
 	return a:p1 ==# a:p2 || ingo#fs#path#Normalize(fnamemodify(resolve(a:p1), ':p')) ==# ingo#fs#path#Normalize(fnamemodify(resolve(a:p2), ':p'))
-    endfunction
-endif
+    endif
+endfunction
+
+function! ingo#fs#path#Exists( filespec )
+"******************************************************************************
+"* PURPOSE:
+"   Test whether the passed a:filespec exists (as a file or directory). This is
+"   like the combination of filereadable() and isdirectory(), but without the
+"   requirement that the file must be readable.
+"* ASSUMPTIONS / PRECONDITIONS:
+"   None.
+"* EFFECTS / POSTCONDITIONS:
+"   None.
+"* INPUTS:
+"   a:filespec      Filespec or dirspec.
+"* RETURN VALUES:
+"   0 if there's no such file or directory, 1 if it exists.
+"******************************************************************************
+    " I suppose these are faster than the glob(), and this avoids any escaping
+    " issues, too, so it is more robust.
+    if filereadable(a:filespec) || isdirectory(a:filespec)
+	return 1
+    endif
+
+    let l:filespec = ingo#escape#file#wildcardescape(a:filespec)
+    if v:version == 702 && has('patch051') || v:version > 702
+	return ! empty(glob(l:filespec, 1))
+    else
+	let l:save_wildignore = &wildignore
+	set wildignore=
+	try
+	    return ! empty(glob(l:filespec))
+	finally
+	    let &wildignore = l:save_wildignore
+	endtry
+    endif
+endfunction
 
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :

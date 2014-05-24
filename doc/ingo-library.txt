@@ -81,6 +81,37 @@ IDEAS							  *ingo-library-ideas*
 ==============================================================================
 HISTORY							*ingo-library-history*
 
+1.019	24-May-2014
+- Add ingo#plugin#setting#BooleanToStringValue().
+- Add ingo#strdisplaywidth#GetMinMax().
+- Add ingo/undo.vim module.
+- Add ingo/query.vim module.
+- Add ingo/pos.vim module.
+- Add optional a:isBeep argument to ingo#msg#ErrorMsg().
+- ingo#fs#path#Normalize(): Don't normalize to Cygwin /cygdrive/x/... when the
+  chosen path separator is "\". This would result in a mixed separator style
+  that is not actually handled.
+- ingo#fs#path#Normalize(): Add special normalization to "C:/" on Cygwin via
+  ":/" path separator argument.
+- In ingo#actions#EvaluateWithValOrFunc(), remove any occurrence of "v:val"
+  instead of passing an empty list or empty string. This is useful for
+  invoking functions (an expression, not Funcref) with optional arguments.
+- ENH: Make ingo#lines#Replace() handle replacement with nothing (empty List)
+  and replacing the entire buffer (without leaving an additional empty line).
+- Correct ingo#query#confirm#AutoAccelerators() default choice when not given
+  (1 instead of 0). Avoid using the default choice's first character as
+  accelerator unless in GUI dialog, as the plain text confirm() assigns a
+  default accelerator.
+- Move subs/URL.vim into ingo-library as ingo/codec/URL.vim module.
+- Allow optional a:ignorecase argument for ingo#str#StartsWith() and
+  ingo#str#EndsWith().
+- Add ingo#fs#path#IsCaseInsensitive().
+- Add ingo#str#Equals() for when it's convenient to pass in the a:ignorecase
+  flag. This avoids coding the conditional between ==# and ==? yourself.
+- Add ingo/fs/path/split.vim module.
+- Add ingo#fs#path#Exists().
+- FIX: Correct ingo#escape#file#wildcardescape() of * and ? on Windows.
+
 1.018	14-Apr-2014
 - FIX: Off-by-one: Allow column 1 in ingo#text#Insert(). Add special cases for
   insertion at front and end of line (in the hope that this is more
@@ -336,6 +367,7 @@ Started development of shared autoload functionality.
 
 ==============================================================================
 Copyright: (C) 2009-2014 Ingo Karkat
+Contains URL encoding / decoding algorithms written by Tim Pope.
 The VIM LICENSE applies to this plugin; see |copyright|.
 
 Maintainer:	Ingo Karkat <ingo@karkat.de>
