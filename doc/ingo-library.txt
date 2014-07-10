@@ -81,6 +81,30 @@ IDEAS							  *ingo-library-ideas*
 ==============================================================================
 HISTORY							*ingo-library-history*
 
+1.021	10-Jul-2014
+- Add ingo#compat#uniq().
+- Add ingo#option#Contains() and ingo#option#ContainsOneOf().
+- BUG: Wrong position type causes ingo#selection#position#get() to be one-off
+  with :set selection=exclusive and when the cursor is after the selection.
+- Use built-in changenr() in ingo#undo#GetChangeNumber(); actually, the entire
+  function could be replaced by the built-in, if it would not just return one
+  less than the number of the undone change after undo. We want the result to
+  represent the current change, regardless of what undo / redo was done
+  earlier. Change the implementation to test for whether the current change is
+  the last in the buffer, and if not, make a no-op change to get to an
+  explicit change state.
+- Simplify ingo#buffer#temprange#Execute() by using changenr(). Keep using
+  ingo#undo#GetChangeNumber() because we need to create a new no-op change
+  when there was a previous :undo.
+- Add ingo/smartcase.vim module.
+- FIX: ingo#cmdargs#substitute#Parse() branch for special case of {flags}
+  without /pat/string/ must only be entered when a:arguments is not empty.
+- ENH: Allow to pass path separator to ingo#regexp#fromwildcard#Convert() and
+  ingo#regexp#fromwildcard#IsWildcardPathPattern().
+- Add ingo/collections/permute.vim module.
+- Add ingo#window#preview#OpenFilespec(), a wrapper around :pedit that
+  performs the fnameescape() and obeys the custom g:previewwindowsplitmode.
+
 1.020	11-Jun-2014
 - Add ingo/dict/find.vim module.
 - Use ingo#escape#Unescape() in ingo#cmdargs#pattern#Unescape(). Add

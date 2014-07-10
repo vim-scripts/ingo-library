@@ -1,6 +1,8 @@
 " ingo/compat.vim: Functions for backwards compatibility with old Vim versions.
 "
 " DEPENDENCIES:
+"   - ingo/collections.vim autoload script
+"   - ingo/options.vim autoload script
 "   - ingo/strdisplaywidth.vim autoload script
 "
 " Copyright: (C) 2013-2014 Ingo Karkat
@@ -9,6 +11,9 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.021.011	12-Jun-2014	Make test for 'virtualedit' option values also
+"				account for unrelated values.
+"   1.021.010	11-Jun-2014	Add ingo#compat#uniq().
 "   1.020.009	30-May-2014	Add ingo#compat#abs().
 "   1.018.008	12-Apr-2014	FIX: Off-by-one in emulated
 "				ingo#compat#strdisplaywidth() reported one too
@@ -62,6 +67,16 @@ if exists('*abs')
 else
     function! ingo#compat#abs( expr )
 	return (a:expr < 0 ? -1 : 1) * a:expr
+    endfunction
+endif
+
+if exists('*uniq')
+    function ingo#compat#uniq( list )
+	return uniq(a:list)
+    endfunction
+else
+    function ingo#compat#uniq( list )
+	return ingo#collections#UniqueSorted(a:list)
     endfunction
 endif
 
@@ -204,7 +219,7 @@ else
 	    call setpos('.', l:save_cursor)
 	    return 0
 	elseif a:expr ==# "'>"
-	    if &selection ==# 'exclusive' && empty(&virtualedit)
+	    if &selection ==# 'exclusive' && ! ingo#option#ContainsOneOf(&virtualedit, ['all', 'onemore'])
 		" We may have to select the last character in a line.
 		let l:save_virtualedit = &virtualedit
 		set virtualedit=onemore

@@ -9,6 +9,11 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.021.005	17-Jun-2014	Simplify ingo#buffer#temprange#Execute() by
+"				using changenr(). Keep using
+"				ingo#undo#GetChangeNumber() because we need to
+"				create a new no-op change when there was a
+"				previous :undo.
 "   1.019.003	25-Apr-2014	Factor out ingo#undo#GetChangeNumber().
 "   1.018.002	12-Apr-2014	Add optional a:undoCnt argument.
 "	001	09-Apr-2014	file creation from visualrepeat.vim
@@ -73,12 +78,9 @@ function! ingo#buffer#temprange#Execute( lines, command, ... )
 		    throw 'CannotUndo'
 		endif
 		" XXX: Inside a function invocation, no separate change is created.
-		if ! exists('*undotree') || undotree().seq_cur > l:undoChangeNumber
+		if changenr() > l:undoChangeNumber
 		    silent execute 'undo' l:undoChangeNumber
 "****D else | echomsg '**** no new undo change number'
-		endif
-		if ! exists('*undotree')
-		    silent undo " Need one more undo here.
 		endif
 	    endif
 
