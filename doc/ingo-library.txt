@@ -81,6 +81,15 @@ IDEAS							  *ingo-library-ideas*
 ==============================================================================
 HISTORY							*ingo-library-history*
 
+1.022	26-Sep-2014
+- Add ingo#pos#Before() and ingo#pos#After().
+- Move LineJuggler#FoldClosed() and LineJuggler#FoldClosedEnd() into
+  ingo-library as ingo#range#NetStart() and ingo#range#NetEnd().
+- Add ingo/regexp/pairs.vim module.
+- Add ingo#compat#glob() and ingo#compat#globpath().
+- ingo#range#lines#Get() needs to consider and temporarily disable closed
+  folds when resolving /{pattern}/ ranges.
+
 1.021	10-Jul-2014
 - Add ingo#compat#uniq().
 - Add ingo#option#Contains() and ingo#option#ContainsOneOf().

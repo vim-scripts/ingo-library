@@ -11,6 +11,12 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.022.014	25-Sep-2014	FIX: Non-list argument to glob() for old Vim
+"				versions.
+"   1.022.013	23-Sep-2014	FIX: globpath() with {list} argument is only
+"				available with Vim 7.4.279.
+"   1.022.012	22-Sep-2014	Add ingo#compat#glob() and
+"				ingo#compat#globpath().
 "   1.021.011	12-Jun-2014	Make test for 'virtualedit' option values also
 "				account for unrelated values.
 "   1.021.010	11-Jun-2014	Add ingo#compat#uniq().
@@ -71,11 +77,11 @@ else
 endif
 
 if exists('*uniq')
-    function ingo#compat#uniq( list )
+    function! ingo#compat#uniq( list )
 	return uniq(a:list)
     endfunction
 else
-    function ingo#compat#uniq( list )
+    function! ingo#compat#uniq( list )
 	return ingo#collections#UniqueSorted(a:list)
     endfunction
 endif
@@ -170,6 +176,74 @@ function! ingo#compat#shellescape( filespec, ... )
 	endif
     endif
 endfunction
+
+if v:version == 704 && has('patch279') || v:version > 704
+    " This one has both {nosuf} and {list}.
+    function! ingo#compat#glob( ... )
+	return call('glob', a:000)
+    endfunction
+    function! ingo#compat#globpath( ... )
+	return call('globpath', a:000)
+    endfunction
+elseif v:version == 703 && has('patch465') || v:version > 703
+    " This one has glob() with both {nosuf} and {list}.
+    function! ingo#compat#glob( ... )
+	return call('glob', a:000)
+    endfunction
+    function! ingo#compat#globpath( ... )
+	let l:list = (a:0 > 3 && a:4)
+	let l:result = call('globpath', a:000[0:2])
+	return (l:list ? split(l:result, '\n') : l:result)
+    endfunction
+elseif v:version == 702 && has('patch051') || v:version > 702
+    " This one has {nosuf}.
+    function! ingo#compat#glob( ... )
+	let l:list = (a:0 > 2 && a:3)
+	let l:result = call('glob', a:000[0:1])
+	return (l:list ? split(l:result, '\n') : l:result)
+    endfunction
+    function! ingo#compat#globpath( ... )
+	let l:list = (a:0 > 3 && a:4)
+	let l:result = call('globpath', a:000[0:2])
+	return (l:list ? split(l:result, '\n') : l:result)
+    endfunction
+else
+    " This one has neither {nosuf} nor {list}.
+    function! ingo#compat#glob( ... )
+	let l:nosuf = (a:0 > 1 && a:2)
+	let l:list = (a:0 > 2 && a:3)
+
+	if l:nosuf
+	    let l:save_wildignore = &wildignore
+	    set wildignore=
+	endif
+	try
+	    let l:result = call('glob', [a:1])
+	    return (l:list ? split(l:result, '\n') : l:result)
+	finally
+	    if exists('l:save_wildignore')
+		let &wildignore = l:save_wildignore
+	    endif
+	endtry
+    endfunction
+    function! ingo#compat#globpath( ... )
+	let l:nosuf = (a:0 > 2 && a:3)
+	let l:list = (a:0 > 3 && a:4)
+
+	if l:nosuf
+	    let l:save_wildignore = &wildignore
+	    set wildignore=
+	endif
+	try
+	    let l:result = call('globpath', a:000[0:1])
+	    return (l:list ? split(l:result, '\n') : l:result)
+	finally
+	    if exists('l:save_wildignore')
+		let &wildignore = l:save_wildignore
+	    endif
+	endtry
+    endfunction
+endif
 
 if v:version == 703 && has('patch32') || v:version > 703
     function! ingo#compat#maparg( name, ... )
