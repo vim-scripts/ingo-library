@@ -2,12 +2,14 @@
 "
 " DEPENDENCIES:
 "
-" Copyright: (C) 2010-2014 Ingo Karkat
+" Copyright: (C) 2010-2015 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.023.013	25-Nov-2014	Expose ingo#regexp#MakeWholeWordSearch() (with
+"				the second a:pattern argument made optional).
 "   1.020.012	29-May-2014	CHG: At ingo#regexp#FromLiteralText(), add the
 "				a:isWholeWordSearch also on either side, or when
 "				there are non-keyword characters in the middle
@@ -78,14 +80,14 @@ function! ingo#regexp#EscapeLiteralText( text, additionalEscapeCharacters )
     return substitute(escape(a:text, '\' . ingo#regexp#GetSpecialCharacters() . a:additionalEscapeCharacters), "\n", '\\n', 'g')
 endfunction
 
-function! s:MakeWholeWordSearch( text, pattern )
+function! ingo#regexp#MakeWholeWordSearch( text, ... )
     " The star command only creates a \<whole word\> search pattern if the
     " <cword> actually only consists of keyword characters. Since
     " ingo#regexp#FromLiteralText() could handle a superset (e.g. also
     " "foo...bar"), just ensure that the keyword boundaries can be enforced at
     " either side, to avoid enclosing a non-keyword side and making a match
     " impossible with it (e.g. "\<..bar\>").
-    let l:pattern = a:pattern
+    let l:pattern = (a:0 ? a:1 : a:text)
     if a:text =~# '^\k'
 	let l:pattern = '\<' . l:pattern
     endif
@@ -120,7 +122,7 @@ function! ingo#regexp#FromLiteralText( text, isWholeWordSearch, additionalEscape
 "   Regular expression for matching a:text.
 "*******************************************************************************
     if a:isWholeWordSearch
-	return s:MakeWholeWordSearch(a:text, ingo#regexp#EscapeLiteralText(a:text, a:additionalEscapeCharacters))
+	return ingo#regexp#MakeWholeWordSearch(a:text, ingo#regexp#EscapeLiteralText(a:text, a:additionalEscapeCharacters))
     else
 	return ingo#regexp#EscapeLiteralText(a:text, a:additionalEscapeCharacters)
     endif
@@ -130,10 +132,11 @@ function! ingo#regexp#FromWildcard( wildcardExpr, additionalEscapeCharacters )
 "*******************************************************************************
 "* PURPOSE:
 "   Convert a shell-like a:wildcardExpr which may contain wildcards ? and * into
-"   a regular expression.
+"   an (unanchored!) regular expression.
 "
 "   The ingo#regexp#fromwildcard#Convert() supports the full range of wildcards
-"   and considers the path separators on different platforms.
+"   and considers the path separators on different platforms. An anchored
+"   version is ingo#regexp#fromwildcard#AnchoredToPathBoundaries().
 "* ASSUMPTIONS / PRECONDITIONS:
 "   None.
 "* EFFECTS / POSTCONDITIONS:

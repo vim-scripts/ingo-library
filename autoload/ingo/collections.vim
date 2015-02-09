@@ -4,12 +4,13 @@
 "   - ingo/dict.vim autoload script
 "   - ingo/list.vim autoload script
 "
-" Copyright: (C) 2011-2013 Ingo Karkat
+" Copyright: (C) 2011-2015 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.023.012	22-Oct-2014	Add ingo#collections#mapsort().
 "   1.014.011	15-Oct-2013	Use the extracted ingo#list#AddOrExtend().
 "   1.011.010	12-Jul-2013	Make ingo#collections#ToDict() handle empty list
 "				items via an optional a:emptyValue argument.
@@ -99,6 +100,9 @@ function! ingo#collections#UniqueSorted( list )
 "* PURPOSE:
 "   Filter the sorted a:list so that each element is contained only once.
 "   Equality check is done on the list elements, always case-sensitive.
+"* SEE ALSO:
+"   - ingo#compat#uniq() is a compatibility wrapper around the uniq() function
+"     introduced in Vim 7.4.
 "* ASSUMPTIONS / PRECONDITIONS:
 "   None.
 "* EFFECTS / POSTCONDITIONS:
@@ -143,7 +147,7 @@ function! ingo#collections#UniqueStable( list, ... )
     let l:itemDict = {}
     let l:result = []
     for l:item in a:list
-	let l:key = ('' . l:item ==# '' ? l:emptyValue : l:item)
+	let l:key = '' . (l:item ==# '' ? l:emptyValue : l:item)
 	if ! has_key(l:itemDict, l:key)
 	    let l:itemDict[l:key] = 1
 	    call add(l:result, l:item)
@@ -257,6 +261,28 @@ function! ingo#collections#numsort( i1, i2, ... )
 "******************************************************************************
     let l:base = (a:0 ? a:1 : 10)
     let [l:i1, l:i2] = [str2nr(a:i1, l:base), str2nr(a:i2, l:base)]
+    return l:i1 == l:i2 ? 0 : l:i1 > l:i2 ? 1 : -1
+endfunction
+
+function! ingo#collections#mapsort( string, i1, i2 )
+"******************************************************************************
+"* PURPOSE:
+"   Helper sort function for map()ped values. As Vim doesn't have real closures,
+"   you still need to define your own (two-argument) sort function, but you can
+"   use this to make that a simple stub.
+"* ASSUMPTIONS / PRECONDITIONS:
+"   None.
+"* EFFECTS / POSTCONDITIONS:
+"   None.
+"* INPUTS:
+"   a:string  Vimscript expression to be evaluated over [a:i1, a:i2] via map().
+"   i1, i2  Elements
+"* RETURN VALUES:
+"   -1, 0 or 1, as specified by the sort() function.
+"   Note: To reverse the sort order, just multiply this function's return value
+"   with -1.
+"******************************************************************************
+    let [l:i1, l:i2] = map([a:i1, a:i2], a:string)
     return l:i1 == l:i2 ? 0 : l:i1 > l:i2 ? 1 : -1
 endfunction
 

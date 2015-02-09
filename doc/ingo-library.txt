@@ -81,6 +81,44 @@ IDEAS							  *ingo-library-ideas*
 ==============================================================================
 HISTORY							*ingo-library-history*
 
+1.023	09-Feb-2015
+- ENH: Make ingo#selection#frompattern#GetPositions() automatically convert
+  \%# in the passed a:pattern to the hard-coded cursor column.
+- Add ingo#collections#mapsort().
+- Add ingo/collections/memoized.vim module.
+- ENH: Add optional a:isReturnAsList flag to ingo#buffer#temp#Execute() and
+  ingo#buffer#temp#Call().
+- ENH: Also allow passing an items List to ingo#dict#Mirror() and
+  ingo#dict#AddMirrored() (useful to influence which key from equal values is
+  used).
+- ENH: Also support optional a:isEnsureUniqueness flag for
+  ingo#dict#FromItems().
+- Expose ingo#regexp#MakeWholeWordSearch().
+- Add ingo#plugin#setting#GetTabLocal().
+- ENH: Add a:isFile flag to ingo#escape#file#bufnameescape() in order to do
+  full matching on scratch buffer names. There, the expansion to a full
+  absolute path must be skipped in order to match.
+- ENH: Add a:isGetAllRanges optional argument to ingo#range#lines#Get().
+- Add ingo#strdisplaywidth#TruncateTo().
+- Add ingo/str/frompattern.vim module.
+- Add ingo/folds/persistence.vim module.
+- Add ingo#cmdargs#pattern#IsDelimited().
+- Support ingo#query#fromlist#Query() querying of more than 10 elements by
+  number. Break listing of query choices into multiple lines when the overall
+  question doesn't fit in a single line.
+- Add ingo/event.vim module.
+- Add ingo/range/merge.vim module.
+- Add ingo#filetype#IsPrimary().
+- Add ingo#plugin#setting#GetScope().
+- Add ingo#regexp#fromwildcard#AnchoredToPathBoundaries().
+- Use :close! in ingo#buffer#visible#Execute() to handle modified buffers when
+  :set nohidden, too.
+- Improve heuristics of ingo#window#quickfix#IsQuickfixList() to also handle
+  empty location list (with non-empty quickfix list).
+- Minor: ingo#text#Remove(): Correct exception prefix.
+- Add ingo#window#quickfix#TranslateVirtualColToByteCount() from
+  autoload/QuickFixCurrentNumber.vim.
+
 1.022	26-Sep-2014
 - Add ingo#pos#Before() and ingo#pos#After().
 - Move LineJuggler#FoldClosed() and LineJuggler#FoldClosedEnd() into
@@ -431,7 +469,7 @@ First published version as separate shared library.
 Started development of shared autoload functionality.
 
 ==============================================================================
-Copyright: (C) 2009-2014 Ingo Karkat
+Copyright: (C) 2009-2015 Ingo Karkat
 Contains URL encoding / decoding algorithms written by Tim Pope.
 The VIM LICENSE applies to this plugin; see |copyright|.
 
