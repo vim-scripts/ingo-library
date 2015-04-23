@@ -33,6 +33,8 @@ Other authors have published separate support libraries, too:
 - vim-misc (vimscript #4597) by Peter Odding
 - maktaba (https://github.com/google/maktaba) by Google
 - vital (https://github.com/vim-jp/vital.vim) by the Japanese Vim user group
+- underscore.vim (vimscript #5149) by haya14busa provides functional
+  programming functions and depends on the (rather complex) vital library
 
 There have been initiatives to gather and consolidate useful functions into a
 "standard Vim library", but these efforts have mostly fizzled out.
@@ -80,6 +82,44 @@ IDEAS							  *ingo-library-ideas*
 
 ==============================================================================
 HISTORY							*ingo-library-history*
+
+1.024	23-Apr-2015
+- FIX: Also correctly set change marks when replacing entire buffer with
+  ingo#lines#Replace().
+- Add ingo/collections/differences.vim module.
+- Add ingo/compat/regexp.vim module.
+- Add ingo/encoding.vim module.
+- Add ingo/str/join.vim module.
+- Add ingo#option#SplitAndUnescape().
+- Add ingo#list#Zip() and ingo#list#ZipLongest().
+- ingo#buffer#visible#Execute(): Restore the window layout when the buffer is
+  visible but in a window with 0 height / width. And restore the previous
+  window when the buffer isn't visible yet. Add a check that the command
+  hasn't switched to another window (and go back if true) before closing the
+  split window.
+- Add ingo/regexp/virtcols.vim module.
+- Add ingo#str#GetVirtCols() and ingo#text#RemoveVirtCol().
+- FIX: Off-by-one: Allow column 1 in ingo#text#Remove().
+- BUG: ingo#buffer#scratch#Create() with existing scratch buffer yields "E95:
+  Buffer with this name already exists" instead of reusing the buffer.
+- Keep current cursor position when ingo#buffer#scratch#Create() removes the
+  first empty line in the scratch buffer.
+- ingo#text#frompattern#GetHere(): Do not move the cursor (to the end of the
+  matched pattern); this is unexpected and can be easily avoided.
+- FIX: ingo#cmdargs#GetStringExpr(): Escape (unescaped) double quotes when the
+  argument contains backslashes; else, the expansion of \x will silently fail.
+- Add ingo#cmdargs#GetUnescapedExpr(); when there's no need for empty
+  expressions, the removal of the (single / double) quotes may be unexpected.
+- ingo#text#Insert(): Also allow insertion one beyond the last line (in column
+  1), just like setline() allows.
+- Rename ingo#date#format#Human() to ingo#date#format#Preferred(), default to
+  %x value for strftime(), and allow to customize that (even dynamically,
+  maybe based on 'spelllang').
+- Add optional a:templateForNewBuffer argument to ingo#fs#tempfile#Make() and
+  ensure (by default) that the temp file isn't yet loaded in a Vim buffer
+  (which would generate "E139: file is loaded in another buffer" on the usual
+  :write, :saveas commands).
+- Add ingo#compat#shiftwidth(), taken from :h shiftwidth().
 
 1.023	09-Feb-2015
 - ENH: Make ingo#selection#frompattern#GetPositions() automatically convert

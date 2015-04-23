@@ -20,6 +20,8 @@ Other authors have published separate support libraries, too:
 - vim-misc (vimscript #4597) by Peter Odding
 - maktaba (https://github.com/google/maktaba) by Google
 - vital (https://github.com/vim-jp/vital.vim) by the Japanese Vim user group
+- underscore.vim (vimscript #5149) by haya14busa provides functional
+  programming functions and depends on the (rather complex) vital library
 
 There have been initiatives to gather and consolidate useful functions into a
 "standard Vim library", but these efforts have mostly fizzled out.

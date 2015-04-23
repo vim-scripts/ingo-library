@@ -9,6 +9,12 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.024.009	22-Apr-2015	ingo#text#Insert(): Also allow insertion one
+"				beyond the last line (in column 1), just like
+"				setline() allows.
+"   1.024.008	01-Apr-2015	Add ingo#text#RemoveVirtCol().
+"				FIX: Off-by-one: Allow column 1 in
+"				ingo#text#Remove().
 "   1.023.007	07-Feb-2015	Minor: ingo#text#Remove(): Correct exception
 "				prefix.
 "   1.019.006	30-Apr-2014	Use ingo/pos.vim.
@@ -103,10 +109,11 @@ function! ingo#text#Insert( pos, text )
 "   a:pos   [line, col]; col is the 1-based byte-index.
 "   a:text  String to insert.
 "* RETURN VALUES:
-"   Flag whether the position existed and insertion was done.
+"   Flag whether the position existed (inserting in column 1 of one line beyond
+"   the last one is also okay) and insertion was done.
 "******************************************************************************
     let [l:lnum, l:col] = a:pos
-    if l:lnum > line('$')
+    if l:lnum > line('$') + 1
 	return 0
     endif
 
@@ -146,10 +153,43 @@ function! ingo#text#Remove( pos, len )
     let l:line = getline(l:lnum)
     if l:col > len(l:line)
 	return 0
-    elseif l:col <= 1
+    elseif l:col < 1
 	throw 'Remove: Column must be at least 1'
     endif
     return (setline(l:lnum, strpart(l:line, 0, l:col - 1) . strpart(l:line, l:col - 1 + a:len)) == 0)
+endfunction
+function! ingo#text#RemoveVirtCol( pos, width, isAllowSmaller )
+"******************************************************************************
+"* PURPOSE:
+"   Remove a:width screen columns of text at a:pos.
+"* ASSUMPTIONS / PRECONDITIONS:
+"   Buffer is modifiable.
+"* EFFECTS / POSTCONDITIONS:
+"   Changes the buffer.
+"* INPUTS:
+"   a:pos   [line, virtcol]; virtcol is the 1-based screen column.
+"   a:width Number of screen columns.
+"   a:isAllowSmaller    Boolean flag whether less characters can be removed if
+"			the end doesn't fall on a character border, or there
+"			aren't that many characters.
+"* RETURN VALUES:
+"   Flag whether the position existed and removal was done.
+"******************************************************************************
+    let [l:lnum, l:virtcol] = a:pos
+    if l:lnum > line('$') || a:width <= 0
+	return 0
+    endif
+
+    if l:virtcol < 1
+	throw 'Remove: Column must be at least 1'
+    endif
+    let l:line = getline(l:lnum)
+    let l:newLine = substitute(l:line, ingo#regexp#virtcols#ExtractCells(l:virtcol, a:width, a:isAllowSmaller), '', '')
+    if l:newLine ==# l:line
+	return 0
+    else
+	return setline(l:lnum, l:newLine)
+    endif
 endfunction
 
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :
